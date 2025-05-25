@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Evolution Clicker</title>
+    <style>
+        :root {
+            --primary-color: #6e45e2;
+            --secondary-color: #88d3ce;
+            --dark-bg: #1a1a2e;
+            --darker-bg: #16213e;
+            --text-color: #f1f1f1;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--dark-bg);
+            color: var(--text-color);
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(110, 69, 226, 0.3);
+        }
+
+        .clicker-section {
+            position: relative;
+            margin: 40px 0;
+        }
+
+        .click-target {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            background: radial-gradient(circle, var(--darker-bg), var(--dark-bg));
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(110, 69, 226, 0.5);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.1s;
+        }
+
+        .click-target:active {
+            transform: scale(0.95);
+        }
+
+        .click-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(110, 69, 226, 0.3), transparent 70%);
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            100% { transform: scale(1.05); opacity: 1; }
+        }
+
+        .particles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--primary-color);
+        }
+
+        .upgrades {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .upgrade {
+            background: rgba(30, 30, 70, 0.7);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upgrade:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(110, 69, 226, 0.3);
+        }
+
+        .upgrade.unlocked {
+            border-color: var(--secondary-color);
+            background: rgba(136, 211, 206, 0.1);
+        }
+
+        .critical-hit {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            color: gold;
+            text-shadow: 0 0 5px red;
+            animation: critical-pop 0.5s;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        @keyframes critical-pop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.5); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+        .evolution-bar {
+            height: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .evolution-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .prestige-button {
+            background: linear-gradient(90deg, #ff8a00, #ff0058);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .prestige-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 88, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="title">Cosmic Evolution Clicker</h1>
+        </div>
+
+        <div class="stats">
+            <div>
+                <h2>Энергия: <span id="energy">0</span></h2>
+            </div>
+            <div>
+                <h2>ЭПС: <span id="eps">0</span></h2>
+            </div>
+            <div>
+                <h2>Уровень: <span id="level">1</span></h2>
+            </div>
+        </div>
+
+        <div class="evolution-bar">
+            <div class="evolution-progress" id="evolution-progress"></div>
+        </div>
+
+        <div class="clicker-section">
+            <div class="click-target" id="click-target">
+                <div class="click-effect"></div>
+                <div class="particles-container" id="particles"></div>
+            </div>
+        </div>
+
+        <div class="upgrades" id="upgrades"></div>
+
+        <button class="prestige-button" id="prestige-btn">Престиж (Доступно на 50 уровне)</button>
+    </div>
+
+    <script>
+        // Игровые переменные
+        const game = {
+            energy: 0,
+            energyPerSecond: 0,
+            clickPower: 1,
+            level: 1,
+            evolution: 0,
+            upgrades: [
+                { id: 1, name: "Улучшенные клики", cost: 50, power: 1, unlocked: false },
+                { id: 2, name: "Автокликер", cost: 200, power: 0.5, unlocked: false },
+                { id: 3, name: "Квантовый генератор", cost: 500, power: 2, unlocked: false },
+                { id: 4, name: "Критические удары", cost: 1000, power: 0, unlocked: false },
+                { id: 5, name: "Звездная энергия", cost: 5000, power: 5, unlocked: false }
+            ],
+            criticalChance: 0,
+            autoClickers: 0
+        };
+
+        // DOM элементы
+        const clickTarget = document.getElementById('click-target');
+        const particlesContainer = document.getElementById('particles');
+        const energyDisplay = document.getElementById('energy');
+        const epsDisplay = document.getElementById('eps');
+        const levelDisplay = document.getElementById('level');
+        const evolutionProgress = document.getElementById('evolution-progress');
+        const upgradesContainer = document.getElementById('upgrades');
+        const prestigeButton = document.getElementById('prestige-btn');
+
+        // Инициализация игры
+        function init() {
+            loadGame();
+            renderUpgrades();
+            setupEventListeners();
+            startGameLoop();
+        }
+
+        // Загрузка сохранения
+        function loadGame() {
+            const save = localStorage.getItem('cosmicClickerSave');
+            if (save) {
+                Object.assign(game, JSON.parse(save));
+                updateDisplays();
+            }
+        }
+
+        // Сохранение игры
+        function saveGame() {
+            localStorage.setItem('cosmicClickerSave', JSON.stringify(game));
+        }
+
+        // Настройка обработчиков событий
+        function setupEventListeners() {
+            clickTarget.addEventListener('click', handleClick);
+            prestigeButton.addEventListener('click', prestige);
+        }
+
+        // Обработка клика
+        function handleClick(e) {
+            let damage = game.clickPower;
+            let isCritical = false;
+
+            // Проверка на критический удар
+            if (game.criticalChance > 0 && Math.random() < game.criticalChance) {
+                damage *= 2;
+                isCritical = true;
+                showCriticalText(e.clientX, e.clientY);
+            }
+
+            game.energy += damage;
+            game.evolution += damage / 100;
+
+            updateDisplays();
+            createParticles(e);
+            saveGame();
+
+            checkLevelUp();
+        }
+
+        // Создание частиц
+        function createParticles(event) {
+            const rect = clickTarget.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${centerX}px`;
+                particle.style.top = `${centerY}px`;
+                
+                // Разноцветные частицы
+                const hue = Math.random() * 60 + 200;
+                particle.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
+                
+                document.body.appendChild(particle);
+                
+                // Анимация движения
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 1 + Math.random() * 3;
+                const lifetime = 800 + Math.random() * 400;
+                
+                const startTime = Date.now();
+                
+                function animate() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = elapsed / lifetime;
+                    
+                    if (progress >= 1) {
+                        particle.remove();
+                        return;
+                    }
+                    
+                    const distance = speed * elapsed / 50;
+                    particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                    particle.style.opacity = 1 - progress;
+                    
+                    requestAnimationFrame(animate);
+                }
+                
+                requestAnimationFrame(animate);
+            }
+        }
+
+        // Показать текст крита
+        function showCriticalText(x, y) {
+            const critText = document.createElement('div');
+            critText.className = 'critical-hit';
+            critText.textContent = 'CRIT! x2';
+            critText.style.left = `${x}px`;
+            critText.style.top = `${y - 50}px`;
+            document.body.appendChild(critText);
+            
+            setTimeout(() => {
+                critText.remove();
+            }, 500);
+        }
+
+        // Отрисовка улучшений
+        function renderUpgrades() {
+            upgradesContainer.innerHTML = '';
+            
+            game.upgrades.forEach(upgrade => {
+                const upgradeElement = document.createElement('div');
+                upgradeElement.className = `upgrade ${upgrade.unlocked ? 'unlocked' : ''}`;
+                upgradeElement.innerHTML = `
+                    <h3>${upgrade.name}</h3>
+                    <p>+${upgrade.power} ${upgrade.id === 4 ? 'шанс крита' : upgrade.id === 2 ? 'ЭПС' : 'к клику'}</p>
+                    <p>Цена: ${upgrade.cost} энергии</p>
+                `;
+                
+                if (!upgrade.unlocked) {
+                    upgradeElement.addEventListener('click', () => buyUpgrade(upgrade));
+                }
+                
+                upgradesContainer.appendChild(upgradeElement);
+            });
+        }
+
+        // Покупка улучшения
+        function buyUpgrade(upgrade) {
+            if (game.energy >= upgrade.cost && !upgrade.unlocked) {
+                game.energy -= upgrade.cost;
+                upgrade.unlocked = true;
+                
+                // Применение эффектов
+                if (upgrade.id === 1 || upgrade.id === 3 || upgrade.id === 5) {
+                    game.clickPower += upgrade.power;
+                } else if (upgrade.id === 2) {
+                    game.energyPerSecond += upgrade.power;
+                } else if (upgrade.id === 4) {
+                    game.criticalChance += 0.1;
+                }
+                
+                updateDisplays();
+                renderUpgrades();
+                saveGame();
+            }
+        }
+
+        // Проверка повышения уровня
+        function checkLevelUp() {
+            const neededEvolution = game.level * 10;
+            if (game.evolution >= neededEvolution) {
+                game.evolution -= neededEvolution;
+                game.level++;
+                levelUpEffect();
+            }
+            updateEvolutionBar();
+        }
+
+        // Эффект повышения уровня
+        function levelUpEffect() {
+            // Анимация
+            levelDisplay.style.transform = 'scale(1.5)';
+            setTimeout(() => {
+                levelDisplay.style.transform = 'scale(1)';
+            }, 500);
+            
+            // Проверка престижа
+            if (game.level >= 50) {
+                prestigeButton.disabled = false;
+                prestigeButton.textContent = "Престиж (Доступно)";
+            }
+        }
+
+        // Обновление полоски эволюции
+        function updateEvolutionBar() {
+            const neededEvolution = game.level * 10;
+            const progress = (game.evolution / neededEvolution) * 100;
+            evolutionProgress.style.width = `${progress}%`;
+        }
+
+        // Обновление интерфейса
+        function updateDisplays() {
+            energyDisplay.textContent = Math.floor(game.energy);
+            epsDisplay.textContent = game.energyPerSecond.toFixed(1);
+            levelDisplay.textContent = game.level;
+        }
+
+        // Престиж
+        function prestige() {
+            if (game.level >= 50) {
+                const prestigeBonus = Math.floor(game.level / 50);
+                
+                // Сброс с сохранением бонусов
+                game.energy = 0;
+                game.energyPerSecond = 0;
+                game.clickPower = 1 + prestigeBonus * 0.5;
+                game.level = 1;
+                game.evolution = 0;
+                game.criticalChance = 0;
+                
+                // Сброс улучшений
+                game.upgrades.forEach(upgrade => {
+                    upgrade.unlocked = false;
+                });
+                
+                // Анимация престижа
+                const particles = [];
+                for (let i = 0; i < 100; i++) {
+                    particles.push(createPrestigeParticle());
+                }
+                
+                setTimeout(() => {
+                    particles.forEach(p => p.remove());
+                }, 2000);
+                
+                updateDisplays();
+                renderUpgrades();
+                saveGame();
+            }
+        }
+
+        // Создание частиц для престижа
+        function createPrestigeParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.width = '15px';
+            particle.style.height = '15px';
+            particle.style.backgroundColor = 'gold';
+            
+            const rect = clickTarget.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            particle.style.left = `${centerX}px`;
+            particle.style.top = `${centerY}px`;
+            document.body.appendChild(particle);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 3 + Math.random() * 4;
+            const lifetime = 1000 + Math.random() * 500;
+            
+            const startTime = Date.now();
+            
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = elapsed / lifetime;
+                
+                if (progress >= 1) {
+                    particle.remove();
+                    return;
+                }
+                
+                const distance = speed * elapsed / 30;
+                particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                particle.style.opacity = 1 - progress;
+                
+                requestAnimationFrame(animate);
+            }
+            
+            requestAnimationFrame(animate);
+            return particle;
+        }
+
+        // Игровой цикл
+        function startGameLoop() {
+            setInterval(() => {
+                game.energy += game.energyPerSecond / 10;
+                updateDisplays();
+                saveGame();
+            }, 100);
+        }
+
+        // Запуск игры
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
