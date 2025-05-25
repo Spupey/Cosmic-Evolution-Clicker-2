@@ -3,80 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Evolution Clicker</title>
+    <title>Galactic Ascension Clicker</title>
     <style>
         :root {
-            --primary-color: #6e45e2;
-            --secondary-color: #88d3ce;
-            --dark-bg: #1a1a2e;
-            --darker-bg: #16213e;
-            --text-color: #f1f1f1;
+            --techno-color: #00a8ff;
+            --bio-color: #00d8a0;
+            --psi-color: #c678dd;
+            --cosmic-color: #ff6b6b;
+            --dark-bg: #0f0f1a;
+            --darker-bg: #070710;
+            --text-color: #e0e0e0;
         }
 
         body {
             margin: 0;
             padding: 0;
-            background: var(--dark-bg);
+            background-color: var(--dark-bg);
             color: var(--text-color);
-            font-family: 'Arial', sans-serif;
+            font-family: 'Exo 2', sans-serif;
             overflow-x: hidden;
-            user-select: none;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 168, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(198, 120, 221, 0.1) 0%, transparent 20%);
+        }
+
+        .universe-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
         }
 
         .game-container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            text-align: center;
+            position: relative;
         }
 
         .header {
-            margin-bottom: 30px;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
         }
 
         .title {
-            font-size: 2.5rem;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            background: linear-gradient(90deg, var(--techno-color), var(--bio-color), var(--psi-color));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 0 20px rgba(110, 69, 226, 0.3);
+            text-shadow: 0 0 30px rgba(0, 168, 255, 0.5);
+            margin-bottom: 10px;
+            animation: title-glow 3s infinite alternate;
+        }
+
+        @keyframes title-glow {
+            0% { text-shadow: 0 0 30px rgba(0, 168, 255, 0.5); }
+            50% { text-shadow: 0 0 40px rgba(0, 216, 160, 0.6); }
+            100% { text-shadow: 0 0 30px rgba(198, 120, 221, 0.5); }
+        }
+
+        .faction-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .faction-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            font-size: 1.1rem;
+        }
+
+        .faction-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+            z-index: -1;
+        }
+
+        .faction-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .faction-btn[data-faction="techno"] {
+            background-color: var(--techno-color);
+            color: white;
+        }
+
+        .faction-btn[data-faction="bio"] {
+            background-color: var(--bio-color);
+            color: white;
+        }
+
+        .faction-btn[data-faction="psi"] {
+            background-color: var(--psi-color);
+            color: white;
+        }
+
+        .faction-btn[data-faction="cosmic"] {
+            background-color: var(--cosmic-color);
+            color: white;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 40px;
         }
 
         .clicker-section {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             position: relative;
-            margin: 40px 0;
         }
 
-        .click-target {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto;
-            background: radial-gradient(circle, var(--darker-bg), var(--dark-bg));
+        .cosmic-core {
+            width: 250px;
+            height: 250px;
             border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 30px rgba(110, 69, 226, 0.5);
+            background: radial-gradient(circle at center, #1a1a2e, #16213e);
             position: relative;
+            cursor: pointer;
+            box-shadow: 
+                0 0 60px rgba(0, 168, 255, 0.5),
+                0 0 20px rgba(255, 255, 255, 0.8) inset;
+            margin-bottom: 30px;
             overflow: hidden;
-            transition: transform 0.1s;
+            transition: transform 0.2s;
+            animation: core-pulse 4s infinite alternate;
         }
 
-        .click-target:active {
+        @keyframes core-pulse {
+            0% { box-shadow: 0 0 60px rgba(0, 168, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.8) inset; }
+            50% { box-shadow: 0 0 80px rgba(0, 216, 160, 0.6), 0 0 30px rgba(255, 255, 255, 0.9) inset; }
+            100% { box-shadow: 0 0 60px rgba(198, 120, 221, 0.5), 0 0 20px rgba(255, 255, 255, 0.8) inset; }
+        }
+
+        .cosmic-core:active {
             transform: scale(0.95);
         }
 
-        .click-effect {
+        .core-inner {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, rgba(0, 168, 255, 0.1), transparent 70%);
+            animation: inner-spin 20s linear infinite;
+        }
+
+        @keyframes inner-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .core-glow {
             position: absolute;
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(110, 69, 226, 0.3), transparent 70%);
-            animation: pulse 2s infinite alternate;
+            background: radial-gradient(circle at center, rgba(0, 168, 255, 0.3), transparent 70%);
+            animation: glow-pulse 3s infinite alternate;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.5; }
-            100% { transform: scale(1.05); opacity: 1; }
+        @keyframes glow-pulse {
+            0% { opacity: 0.5; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1.05); }
         }
 
         .particles-container {
@@ -84,6 +218,164 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
+            overflow: visible;
+        }
+
+        .energy-display {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .energy-display h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 168, 255, 0.5);
+            animation: energy-glow 2s infinite alternate;
+        }
+
+        @keyframes energy-glow {
+            from { text-shadow: 0 0 10px rgba(0, 168, 255, 0.5); }
+            to { text-shadow: 0 0 20px rgba(0, 168, 255, 0.8); }
+        }
+
+        .energy-display h3 {
+            font-size: 1.5rem;
+            color: #aaa;
+        }
+
+        .evolution-track {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .track-stage {
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border-left: 5px solid transparent;
+        }
+
+        .track-stage::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0, 168, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+
+        .track-stage:hover::before {
+            transform: translateX(0);
+        }
+
+        .track-stage.active {
+            background-color: rgba(0, 168, 255, 0.1);
+            border-left-color: var(--techno-color);
+        }
+
+        .track-stage.completed {
+            background-color: rgba(0, 216, 160, 0.1);
+            border-left-color: var(--bio-color);
+        }
+
+        .tech-tree-container {
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .tech-tree {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .tech-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 168, 255, 0.3);
+        }
+
+        .tech-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        .tech-card.unlocked {
+            background-color: rgba(0, 168, 255, 0.1);
+            border-color: var(--techno-color);
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.2);
+        }
+
+        .tech-card.locked {
+            opacity: 0.6;
+            filter: grayscale(80%);
+        }
+
+        .tech-card.available {
+            background-color: rgba(0, 168, 255, 0.05);
+            border-color: rgba(0, 168, 255, 0.5);
+            cursor: pointer;
+            animation: available-pulse 2s infinite;
+        }
+
+        @keyframes available-pulse {
+            0% { box-shadow: 0 0 0 rgba(0, 168, 255, 0); }
+            50% { box-shadow: 0 0 15px rgba(0, 168, 255, 0.3); }
+            100% { box-shadow: 0 0 0 rgba(0, 168, 255, 0); }
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-log {
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 40px;
+            border: 1px solid rgba(0, 168, 255, 0.3);
+        }
+
+        .event-entry {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .event-entry:last-child {
+            border-bottom: none;
         }
 
         .particle {
@@ -91,55 +383,19 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background-color: var(--primary-color);
+            background-color: var(--techno-color);
             pointer-events: none;
             opacity: 0.8;
         }
 
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 30px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid var(--primary-color);
-        }
-
-        .upgrades {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .upgrade {
-            background: rgba(30, 30, 70, 0.7);
-            border: 1px solid var(--primary-color);
-            border-radius: 8px;
-            padding: 15px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .upgrade:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(110, 69, 226, 0.3);
-        }
-
-        .upgrade.unlocked {
-            border-color: var(--secondary-color);
-            background: rgba(136, 211, 206, 0.1);
-        }
-
-        .critical-hit {
+        .critical {
             position: absolute;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             color: gold;
             text-shadow: 0 0 5px red;
             animation: critical-pop 0.5s;
-            z-index: 100;
+            z-index: 200;
             pointer-events: none;
         }
 
@@ -149,173 +405,420 @@
             100% { transform: scale(1); opacity: 0; }
         }
 
-        .evolution-bar {
-            height: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .evolution-progress {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            width: 0%;
-            transition: width 0.5s;
-        }
-
-        .prestige-button {
-            background: linear-gradient(90deg, #ff8a00, #ff0058);
+        .prestige-btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff8a00, #ff0058);
             border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
+            border-radius: 50px;
             color: white;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 30px;
             transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 0, 88, 0.3);
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        .prestige-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 0, 88, 0.5);
+        .prestige-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .prestige-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .prestige-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 0, 88, 0.4);
+        }
+
+        .prestige-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: linear-gradient(45deg, #666, #999);
+        }
+
+        .faction-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        /* Анимации для разных фракций */
+        .techno-effect {
+            background: radial-gradient(circle at 20% 30%, var(--techno-color), transparent 30%);
+            animation: techno-pulse 8s infinite alternate;
+        }
+
+        @keyframes techno-pulse {
+            0% { opacity: 0.05; }
+            100% { opacity: 0.15; }
+        }
+
+        .bio-effect {
+            background: radial-gradient(circle at 80% 70%, var(--bio-color), transparent 30%);
+            animation: bio-pulse 6s infinite alternate-reverse;
+        }
+
+        @keyframes bio-pulse {
+            0% { opacity: 0.05; }
+            100% { opacity: 0.15; }
+        }
+
+        .psi-effect {
+            background: radial-gradient(circle at 50% 20%, var(--psi-color), transparent 30%);
+            animation: psi-pulse 7s infinite alternate;
+        }
+
+        @keyframes psi-pulse {
+            0% { opacity: 0.05; transform: scale(1); }
+            100% { opacity: 0.15; transform: scale(1.1); }
+        }
+
+        .cosmic-effect {
+            background: radial-gradient(circle at 30% 80%, var(--cosmic-color), transparent 30%);
+            animation: cosmic-pulse 5s infinite alternate-reverse;
+        }
+
+        @keyframes cosmic-pulse {
+            0% { opacity: 0.05; }
+            100% { opacity: 0.15; }
+        }
+
+        /* Анимации переходов */
+        @keyframes scaleIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes floatUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .faction-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cosmic-core {
+                width: 200px;
+                height: 200px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="universe-bg" id="universe-bg"></div>
+    <div class="faction-effects" id="faction-effects"></div>
+
     <div class="game-container">
         <div class="header">
-            <h1 class="title">Cosmic Evolution Clicker</h1>
-        </div>
+            <h1 class="title">GALACTIC ASCENSION</h1>
+            <p>Кликер вселенской эволюции</p>
 
-        <div class="stats">
-            <div>
-                <h2>Энергия: <span id="energy">0</span></h2>
-            </div>
-            <div>
-                <h2>ЭПС: <span id="eps">0</span></h2>
-            </div>
-            <div>
-                <h2>Уровень: <span id="level">1</span></h2>
+            <div class="faction-selector">
+                <button class="faction-btn" data-faction="techno">Технократы</button>
+                <button class="faction-btn" data-faction="bio">Биожизнь</button>
+                <button class="faction-btn" data-faction="psi">Псионики</button>
+                <button class="faction-btn" data-faction="cosmic">Космические</button>
             </div>
         </div>
 
-        <div class="evolution-bar">
-            <div class="evolution-progress" id="evolution-progress"></div>
-        </div>
+        <div class="main-content">
+            <div class="clicker-section">
+                <div class="cosmic-core" id="click-target">
+                    <div class="core-inner"></div>
+                    <div class="core-glow"></div>
+                    <div class="particles-container" id="particles"></div>
+                </div>
+                
+                <div class="energy-display">
+                    <h2 id="energy-count">0</h2>
+                    <h3>Энергии</h3>
+                    <h3 id="eps-count">0 ЭПС</h3>
+                </div>
+            </div>
 
-        <div class="clicker-section">
-            <div class="click-target" id="click-target">
-                <div class="click-effect"></div>
-                <div class="particles-container" id="particles"></div>
+            <div class="evolution-track">
+                <div class="track-stage active" data-stage="quantum">
+                    <h3>Квантовая эра</h3>
+                    <p>Разблокировано: 5/12</p>
+                    <div class="progress-bar"></div>
+                </div>
+                <div class="track-stage" data-stage="atomic">
+                    <h3>Атомная эра</h3>
+                    <p>Требуется: 1,000 энергии</p>
+                </div>
+                <div class="track-stage" data-stage="molecular">
+                    <h3>Молекулярная эра</h3>
+                    <p>Требуется: 5,000 энергии</p>
+                </div>
+                <div class="track-stage" data-stage="cosmic">
+                    <h3>Космическая эра</h3>
+                    <p>Требуется: 25,000 энергии</p>
+                </div>
+                <div class="track-stage" data-stage="universal">
+                    <h3>Универсальная эра</h3>
+                    <p>Требуется: 100,000 энергии</p>
+                </div>
             </div>
         </div>
 
-        <div class="upgrades" id="upgrades"></div>
+        <div class="tech-tree-container">
+            <h2>Древо технологий <span id="faction-name"></span></h2>
+            <div class="tech-tree" id="tech-tree"></div>
+        </div>
 
-        <button class="prestige-button" id="prestige-btn">Престиж (Доступно на 50 уровне)</button>
+        <button class="prestige-btn" id="prestige-btn" disabled>
+            Активировать Престиж (доступно на 50 уровне)
+        </button>
+
+        <div class="event-log" id="event-log">
+            <h3>Журнал событий:</h3>
+        </div>
     </div>
 
+    <audio id="click-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+    <audio id="critical-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+    <audio id="upgrade-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3"></audio>
+    <audio id="prestige-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
+    <audio id="background-music" loop src="https://assets.mixkit.co/music/preview/mixkit-game-show-suspense-waiting-668.mp3"></audio>
+
     <script>
-        // Игровые переменные
-        const game = {
+        // Игровые состояния
+        const gameState = {
             energy: 0,
             energyPerSecond: 0,
             clickPower: 1,
             level: 1,
-            evolution: 0,
-            upgrades: [
-                { id: 1, name: "Улучшенные клики", cost: 50, power: 1, unlocked: false },
-                { id: 2, name: "Автокликер", cost: 200, power: 0.5, unlocked: false },
-                { id: 3, name: "Квантовый генератор", cost: 500, power: 2, unlocked: false },
-                { id: 4, name: "Критические удары", cost: 1000, power: 0, unlocked: false },
-                { id: 5, name: "Звездная энергия", cost: 5000, power: 5, unlocked: false }
-            ],
+            faction: null,
+            unlockedTechs: [],
+            evolutionStage: 'quantum',
             criticalChance: 0,
-            autoClickers: 0
+            autoClickers: 0,
+            prestigeLevel: 0
+        };
+
+        // Технологии для каждой фракции
+        const technologies = {
+            techno: [
+                { id: 't_q1', name: 'Квантовые вычисления', cost: 100, effect: { eps: 0.5 }, description: '+0.5 к энергии в секунду', era: 'quantum' },
+                { id: 't_q2', name: 'Стабилизация частиц', cost: 250, effect: { clickPower: 2 }, description: 'Удваивает силу клика', era: 'quantum' },
+                { id: 't_a1', name: 'Атомный синтез', cost: 1000, effect: { eps: 5 }, description: '+5 к энергии в секунду', era: 'atomic' },
+                { id: 't_a2', name: 'Наноконструкторы', cost: 2500, effect: { autoClicker: 1 }, description: 'Автоматические клики (1/сек)', era: 'atomic' },
+                { id: 't_m1', name: 'Молекулярная сборка', cost: 5000, effect: { eps: 15 }, description: '+15 к энергии в секунду', era: 'molecular' }
+            ],
+            bio: [
+                { id: 'b_q1', name: 'Органические связи', cost: 100, effect: { eps: 0.3, clickPower: 0.5 }, description: '+0.3 ЭПС и +0.5 к клику', era: 'quantum' },
+                { id: 'b_q2', name: 'Клеточная эволюция', cost: 300, effect: { clickPower: 1.5 }, description: '+1.5 к силе клика', era: 'quantum' },
+                { id: 'b_a1', name: 'Фотосинтез+', cost: 1200, effect: { eps: 8 }, description: '+8 к энергии в секунду', era: 'atomic' }
+            ],
+            psi: [
+                { id: 'p_q1', name: 'Пси-резонанс', cost: 120, effect: { criticalChance: 0.1 }, description: '10% шанс критического удара', era: 'quantum' },
+                { id: 'p_q2', name: 'Телекинетический импульс', cost: 350, effect: { clickPower: 2.5 }, description: '+2.5 к силе клика', era: 'quantum' },
+                { id: 'p_a1', name: 'Ментальная проекция', cost: 1500, effect: { autoClicker: 0.5, criticalChance: 0.05 }, description: 'Автокликер (0.5/сек) +5% крит', era: 'atomic' }
+            ],
+            cosmic: [
+                { id: 'c_q1', name: 'Гравитационный импульс', cost: 150, effect: { clickPower: 3 }, description: '+3 к силе клика', era: 'quantum' },
+                { id: 'c_q2', name: 'Космическая радиация', cost: 400, effect: { eps: 1, clickPower: 1 }, description: '+1 ЭПС и +1 к клику', era: 'quantum' },
+                { id: 'c_a1', name: 'Черная дыра', cost: 2000, effect: { eps: 10 }, description: 'Поглощает энергию (+10 ЭПС)', era: 'atomic' }
+            ]
         };
 
         // DOM элементы
         const clickTarget = document.getElementById('click-target');
         const particlesContainer = document.getElementById('particles');
-        const energyDisplay = document.getElementById('energy');
-        const epsDisplay = document.getElementById('eps');
-        const levelDisplay = document.getElementById('level');
-        const evolutionProgress = document.getElementById('evolution-progress');
-        const upgradesContainer = document.getElementById('upgrades');
-        const prestigeButton = document.getElementById('prestige-btn');
+        const energyCount = document.getElementById('energy-count');
+        const epsCount = document.getElementById('eps-count');
+        const techTree = document.getElementById('tech-tree');
+        const factionName = document.getElementById('faction-name');
+        const prestigeBtn = document.getElementById('prestige-btn');
+        const eventLog = document.getElementById('event-log');
+        const factionEffects = document.getElementById('faction-effects');
+        const universeBg = document.getElementById('universe-bg');
+
+        // Аудио элементы
+        const clickSound = document.getElementById('click-sound');
+        const criticalSound = document.getElementById('critical-sound');
+        const upgradeSound = document.getElementById('upgrade-sound');
+        const prestigeSound = document.getElementById('prestige-sound');
+        const backgroundMusic = document.getElementById('background-music');
 
         // Инициализация игры
-        function init() {
+        function initGame() {
+            createStars();
             loadGame();
-            renderUpgrades();
             setupEventListeners();
             startGameLoop();
+            renderTechTree();
+            updateUI();
+            
+            // Начать фоновую музыку
+            backgroundMusic.volume = 0.3;
+            backgroundMusic.play().catch(e => console.log("Автовоспроизведение заблокировано"));
         }
 
-        // Загрузка сохранения
-        function loadGame() {
-            const save = localStorage.getItem('cosmicClickerSave');
-            if (save) {
-                Object.assign(game, JSON.parse(save));
-                updateDisplays();
+        // Создать звездный фон
+        function createStars() {
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Случайные параметры звезды
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                
+                // Случайный цвет для некоторых звезд
+                if (Math.random() > 0.7) {
+                    const hue = Math.random() * 60 + 200;
+                    star.style.backgroundColor = `hsl(${hue}, 100%, 80%)`;
+                }
+                
+                universeBg.appendChild(star);
             }
-        }
-
-        // Сохранение игры
-        function saveGame() {
-            localStorage.setItem('cosmicClickerSave', JSON.stringify(game));
         }
 
         // Настройка обработчиков событий
         function setupEventListeners() {
             clickTarget.addEventListener('click', handleClick);
-            prestigeButton.addEventListener('click', prestige);
+            
+            // Выбор фракции
+            document.querySelectorAll('.faction-btn').forEach(btn => {
+                btn.addEventListener('click', () => selectFaction(btn.dataset.faction));
+            });
+            
+            // Престиж
+            prestigeBtn.addEventListener('click', prestige);
+            
+            // Клик по эрам
+            document.querySelectorAll('.track-stage').forEach(stage => {
+                stage.addEventListener('click', () => {
+                    if (stage.classList.contains('active')) return;
+                    setEvolutionStage(stage.dataset.stage);
+                });
+            });
+        }
+
+        // Загрузка сохранения
+        function loadGame() {
+            const save = localStorage.getItem('galacticAscensionSave');
+            if (save) {
+                const parsed = JSON.parse(save);
+                Object.assign(gameState, parsed);
+                
+                if (gameState.faction) {
+                    selectFaction(gameState.faction, true);
+                }
+            }
+        }
+
+        // Сохранение игры
+        function saveGame() {
+            localStorage.setItem('galacticAscensionSave', JSON.stringify(gameState));
         }
 
         // Обработка клика
         function handleClick(e) {
-            let damage = game.clickPower;
+            let damage = gameState.clickPower;
             let isCritical = false;
-
+            
             // Проверка на критический удар
-            if (game.criticalChance > 0 && Math.random() < game.criticalChance) {
+            if (gameState.criticalChance > 0 && Math.random() < gameState.criticalChance) {
                 damage *= 2;
                 isCritical = true;
                 showCriticalText(e.clientX, e.clientY);
+                criticalSound.currentTime = 0;
+                criticalSound.play();
             }
-
-            game.energy += damage;
-            game.evolution += damage / 100;
-
-            updateDisplays();
-            createParticles(e);
+            
+            gameState.energy += damage;
+            
+            // Воспроизведение звука
+            clickSound.currentTime = 0;
+            clickSound.play();
+            
+            // Создание частиц
+            createParticles(e, isCritical);
+            
+            updateUI();
             saveGame();
-
             checkLevelUp();
         }
 
         // Создание частиц
-        function createParticles(event) {
+        function createParticles(event, isCritical) {
             const rect = clickTarget.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
             
-            for (let i = 0; i < 15; i++) {
+            // Количество частиц зависит от критического удара
+            const particleCount = isCritical ? 30 : 15;
+            
+            for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
+                
+                // Размер частицы
+                const size = isCritical ? 
+                    (6 + Math.random() * 6) : 
+                    (3 + Math.random() * 5);
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Позиция
                 particle.style.left = `${centerX}px`;
                 particle.style.top = `${centerY}px`;
                 
-                // Разноцветные частицы
-                const hue = Math.random() * 60 + 200;
-                particle.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
+                // Цвет в зависимости от фракции
+                let color;
+                switch(gameState.faction) {
+                    case 'techno': color = '#00a8ff'; break;
+                    case 'bio': color = '#00d8a0'; break;
+                    case 'psi': color = '#c678dd'; break;
+                    case 'cosmic': color = '#ff6b6b'; break;
+                    default: color = '#ffffff';
+                }
                 
-                document.body.appendChild(particle);
+                // Для критических - золотой цвет
+                particle.style.backgroundColor = isCritical ? 'gold' : color;
+                
+                particlesContainer.appendChild(particle);
                 
                 // Анимация движения
                 const angle = Math.random() * Math.PI * 2;
-                const speed = 1 + Math.random() * 3;
+                const speed = isCritical ? 
+                    (3 + Math.random() * 4) : 
+                    (1 + Math.random() * 3);
                 const lifetime = 800 + Math.random() * 400;
                 
                 const startTime = Date.now();
@@ -343,7 +846,7 @@
         // Показать текст крита
         function showCriticalText(x, y) {
             const critText = document.createElement('div');
-            critText.className = 'critical-hit';
+            critText.className = 'critical';
             critText.textContent = 'CRIT! x2';
             critText.style.left = `${x}px`;
             critText.style.top = `${y - 50}px`;
@@ -354,175 +857,89 @@
             }, 500);
         }
 
-        // Отрисовка улучшений
-        function renderUpgrades() {
-            upgradesContainer.innerHTML = '';
+        // Выбор фракции
+        function selectFaction(faction, silent = false) {
+            gameState.faction = faction;
             
-            game.upgrades.forEach(upgrade => {
-                const upgradeElement = document.createElement('div');
-                upgradeElement.className = `upgrade ${upgrade.unlocked ? 'unlocked' : ''}`;
-                upgradeElement.innerHTML = `
-                    <h3>${upgrade.name}</h3>
-                    <p>+${upgrade.power} ${upgrade.id === 4 ? 'шанс крита' : upgrade.id === 2 ? 'ЭПС' : 'к клику'}</p>
-                    <p>Цена: ${upgrade.cost} энергии</p>
-                `;
+            // Обновление UI
+            document.querySelectorAll('.faction-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.faction-btn[data-faction="${faction}"]`).classList.add('active');
+            
+            // Установка эффектов фракции
+            factionEffects.className = 'faction-effects';
+            factionEffects.classList.add(`${faction}-effect`);
+            
+            // Обновление имени фракции
+            let name;
+            switch(faction) {
+                case 'techno': name = 'Технократов'; break;
+                case 'bio': name = 'Биожизни'; break;
+                case 'psi': name = 'Псиоников'; break;
+                case 'cosmic': name = 'Космических'; break;
+            }
+            factionName.textContent = name;
+            
+            // Перерисовка древа технологий
+            renderTechTree();
+            
+            if (!silent) {
+                logEvent(`Фракция выбрана`, `Вы вступили в ряды ${name}`);
+                saveGame();
+            }
+        }
+
+        // Установка эры эволюции
+        function setEvolutionStage(stage) {
+            gameState.evolutionStage = stage;
+            
+            // Обновление UI
+            document.querySelectorAll('.track-stage').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`.track-stage[data-stage="${stage}"]`).classList.add('active');
+            
+            // Перерисовка древа технологий
+            renderTechTree();
+            
+            logEvent(`Новая эра`, `Вы достигли ${stage} эры эволюции`);
+            saveGame();
+        }
+
+        // Отрисовка древа технологий
+        function renderTechTree() {
+            techTree.innerHTML = '';
+            
+            if (!gameState.faction) return;
+            
+            const currentTechs = technologies[gameState.faction].filter(
+                tech => tech.era === gameState.evolutionStage
+            );
+            
+            currentTechs.forEach(tech => {
+                const techCard = document.createElement('div');
+                techCard.className = 'tech-card';
                 
-                if (!upgrade.unlocked) {
-                    upgradeElement.addEventListener('click', () => buyUpgrade(upgrade));
+                if (gameState.unlockedTechs.includes(tech.id)) {
+                    techCard.classList.add('unlocked');
+                } else if (gameState.energy >= tech.cost) {
+                    techCard.classList.add('available');
+                    techCard.addEventListener('click', () => unlockTech(tech));
+                } else {
+                    techCard.classList.add('locked');
                 }
                 
-                upgradesContainer.appendChild(upgradeElement);
+                techCard.innerHTML = `
+                    <h3>${tech.name}</h3>
+                    <p>${tech.description}</p>
+                    <p class="tech-cost">Стоимость: ${tech.cost} энергии</p>
+                `;
+                
+                techTree.appendChild(techCard);
             });
         }
 
-        // Покупка улучшения
-        function buyUpgrade(upgrade) {
-            if (game.energy >= upgrade.cost && !upgrade.unlocked) {
-                game.energy -= upgrade.cost;
-                upgrade.unlocked = true;
-                
-                // Применение эффектов
-                if (upgrade.id === 1 || upgrade.id === 3 || upgrade.id === 5) {
-                    game.clickPower += upgrade.power;
-                } else if (upgrade.id === 2) {
-                    game.energyPerSecond += upgrade.power;
-                } else if (upgrade.id === 4) {
-                    game.criticalChance += 0.1;
-                }
-                
-                updateDisplays();
-                renderUpgrades();
-                saveGame();
-            }
-        }
-
-        // Проверка повышения уровня
-        function checkLevelUp() {
-            const neededEvolution = game.level * 10;
-            if (game.evolution >= neededEvolution) {
-                game.evolution -= neededEvolution;
-                game.level++;
-                levelUpEffect();
-            }
-            updateEvolutionBar();
-        }
-
-        // Эффект повышения уровня
-        function levelUpEffect() {
-            // Анимация
-            levelDisplay.style.transform = 'scale(1.5)';
-            setTimeout(() => {
-                levelDisplay.style.transform = 'scale(1)';
-            }, 500);
-            
-            // Проверка престижа
-            if (game.level >= 50) {
-                prestigeButton.disabled = false;
-                prestigeButton.textContent = "Престиж (Доступно)";
-            }
-        }
-
-        // Обновление полоски эволюции
-        function updateEvolutionBar() {
-            const neededEvolution = game.level * 10;
-            const progress = (game.evolution / neededEvolution) * 100;
-            evolutionProgress.style.width = `${progress}%`;
-        }
-
-        // Обновление интерфейса
-        function updateDisplays() {
-            energyDisplay.textContent = Math.floor(game.energy);
-            epsDisplay.textContent = game.energyPerSecond.toFixed(1);
-            levelDisplay.textContent = game.level;
-        }
-
-        // Престиж
-        function prestige() {
-            if (game.level >= 50) {
-                const prestigeBonus = Math.floor(game.level / 50);
-                
-                // Сброс с сохранением бонусов
-                game.energy = 0;
-                game.energyPerSecond = 0;
-                game.clickPower = 1 + prestigeBonus * 0.5;
-                game.level = 1;
-                game.evolution = 0;
-                game.criticalChance = 0;
-                
-                // Сброс улучшений
-                game.upgrades.forEach(upgrade => {
-                    upgrade.unlocked = false;
-                });
-                
-                // Анимация престижа
-                const particles = [];
-                for (let i = 0; i < 100; i++) {
-                    particles.push(createPrestigeParticle());
-                }
-                
-                setTimeout(() => {
-                    particles.forEach(p => p.remove());
-                }, 2000);
-                
-                updateDisplays();
-                renderUpgrades();
-                saveGame();
-            }
-        }
-
-        // Создание частиц для престижа
-        function createPrestigeParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.width = '15px';
-            particle.style.height = '15px';
-            particle.style.backgroundColor = 'gold';
-            
-            const rect = clickTarget.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            
-            particle.style.left = `${centerX}px`;
-            particle.style.top = `${centerY}px`;
-            document.body.appendChild(particle);
-            
-            const angle = Math.random() * Math.PI * 2;
-            const speed = 3 + Math.random() * 4;
-            const lifetime = 1000 + Math.random() * 500;
-            
-            const startTime = Date.now();
-            
-            function animate() {
-                const elapsed = Date.now() - startTime;
-                const progress = elapsed / lifetime;
-                
-                if (progress >= 1) {
-                    particle.remove();
-                    return;
-                }
-                
-                const distance = speed * elapsed / 30;
-                particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
-                particle.style.opacity = 1 - progress;
-                
-                requestAnimationFrame(animate);
-            }
-            
-            requestAnimationFrame(animate);
-            return particle;
-        }
-
-        // Игровой цикл
-        function startGameLoop() {
-            setInterval(() => {
-                game.energy += game.energyPerSecond / 10;
-                updateDisplays();
-                saveGame();
-            }, 100);
-        }
-
-        // Запуск игры
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
-</body>
-</html>
+        // Разблокировка технологии
+        function unlockTech(tech) {
+            if (gameState.energy < tech.cost || gameState.unlockedTechs.includes(
